@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
 import * as fabric from 'fabric';
+import React, { useEffect, useRef, useState } from 'react';
 import { socket } from '../utils/socket';
 
 interface WhiteboardProps {
@@ -16,7 +16,7 @@ const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId }) => {
 
   // Init Canvas
   useEffect(() => {
-    const canvasEl = document.getElementById('canvas') as HTMLCanvasElement;
+    const canvasEl = document.getElementById('canvas') as HTMLCanvasElement | null;
     if (!canvasEl) return;
 
     const canvas = new fabric.Canvas(canvasEl, {
@@ -24,10 +24,11 @@ const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId }) => {
       backgroundColor: 'white',
     });
 
-    const pencil = new fabric.PencilBrush(canvas);
-    pencil.width = 2;
-    pencil.color = '#000000';
-    canvas.freeDrawingBrush = pencil;
+    // Set up pencil brush
+    if (canvas.freeDrawingBrush) {
+      canvas.freeDrawingBrush.width = 2;
+      canvas.freeDrawingBrush.color = '#000000';
+    }
 
     canvasRef.current = canvas;
 
@@ -42,16 +43,17 @@ const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId }) => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    const handlePathCreated = (e: any) => {
-      if (e.path) {
-        undoStack.current.push(e.path);
-        socket.emit('draw', e.path.toObject());
+    const handlePathCreated = (options: { path: fabric.Path }) => {
+      const path = options.path;
+      if (path) {
+        undoStack.current.push(path);
+        socket.emit('draw', path.toObject());
       }
     };
     canvas.on('path:created', handlePathCreated);
 
-    const handleMouseMove = (e: fabric.IEvent<MouseEvent>) => {
-      const pointer = canvas.getPointer(e.e);
+    const handleMouseMove = (e: fabric.TEvent) => {
+      const pointer = canvas.getPointer((e.e as MouseEvent));
       socket.emit('cursor-move', {
         x: pointer.x,
         y: pointer.y,
@@ -61,7 +63,7 @@ const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId }) => {
     canvas.on('mouse:move', handleMouseMove);
 
     // Socket Events
-    socket.on('draw', (pathData) => {
+    socket.on('draw', (pathData: any) => {
       const path = new fabric.Path(pathData.path, pathData);
       canvas.add(path);
       canvas.renderAll();
@@ -73,19 +75,19 @@ const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId }) => {
       canvas.renderAll();
     });
 
-    socket.on('send-canvas', (targetSocketId) => {
+    socket.on('send-canvas', (targetSocketId: string) => {
       const data = canvas.toJSON();
       socket.emit('canvas-data', { to: targetSocketId, data });
     });
 
-    socket.on('canvas-data', ({ data }) => {
+    socket.on('canvas-data', ({ data }: { data: any }) => {
       canvas.loadFromJSON(data, () => canvas.renderAll());
     });
 
-    socket.on('cursor-move', ({ x, y, socketId }) => {
+    socket.on('cursor-move', ({ x, y, socketId }: { x: number; y: number; socketId: string }) => {
       if (socketId === socket.id) return;
       const existing = otherCursorsRef.current[socketId];
-      if (!existing) {
+      if (existing == null) {
         const circle = new fabric.Circle({
           left: x,
           top: y,
@@ -106,7 +108,7 @@ const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId }) => {
       canvas.requestRenderAll();
     });
 
-    socket.on('user-disconnected', (socketId) => {
+    socket.on('user-disconnected', (socketId: string) => {
       const circle = otherCursorsRef.current[socketId];
       if (circle) {
         canvas.remove(circle);
@@ -151,11 +153,11 @@ const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId }) => {
   // Handlers
   const handleUndo = () => {
     const canvas = canvasRef.current;
-    if (canvas && undoStack.current.length > 0) {
+    if (canvas && undoStack.current && undoStack.current.length > 0) {
       const obj = undoStack.current.pop();
       if (obj) {
         canvas.remove(obj);
-        redoStack.current.push(obj);
+        redoStack.current && redoStack.current.push(obj);
         canvas.renderAll();
       }
     }
@@ -163,11 +165,11 @@ const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId }) => {
 
   const handleRedo = () => {
     const canvas = canvasRef.current;
-    if (canvas && redoStack.current.length > 0) {
+    if (canvas && redoStack.current && redoStack.current.length > 0) {
       const obj = redoStack.current.pop();
       if (obj) {
         canvas.add(obj);
-        undoStack.current.push(obj);
+        undoStack.current && undoStack.current.push(obj);
         canvas.renderAll();
       }
     }
@@ -187,7 +189,7 @@ const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId }) => {
   const handleDownload = () => {
     const canvas = canvasRef.current;
     if (canvas) {
-      const dataURL = canvas.toDataURL({ format: 'png', quality: 1 });
+      const dataURL = canvas.toDataURL({ multiplier: 1, format: 'png', quality: 1 });
       const link = document.createElement('a');
       link.href = dataURL;
       link.download = 'whiteboard.png';
@@ -221,8 +223,8 @@ const Whiteboard: React.FC<WhiteboardProps> = ({ sessionId }) => {
 
   const handleBrushSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const canvas = canvasRef.current;
-    if (canvas && canvas.freeDrawingBrush) {
-      canvas.freeDrawingBrush.width = parseInt(e.target.value);
+    if (canvas?.freeDrawingBrush) {
+      canvas.freeDrawingBrush.width = Number.parseInt(e.target.value);
     }
   };
 
