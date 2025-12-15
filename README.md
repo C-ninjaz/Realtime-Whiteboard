@@ -70,8 +70,20 @@ This project demonstrates real-time communication, session-based collaboration a
 ---
 
 ## ▶️ UI Screenshots
+  ## Login
+  <p align="center">
+  <img src="frontend/src/assets/loginRT.jpg" width="800" alt="Realtime Whiteboard Demo"/>
+  </p>
 
-
+ ## Session 
+  <p align="center">
+  <img src="frontend/src/assets/SesRT.jpg" width="800" alt="Realtime Whiteboard Demo"/>
+  </p>
+ 
+  ## Whiteboard 
+  <p align="center">
+  <img src="frontend/src/assets/Wb_RT.jpg" width="800" alt="Realtime Whiteboard Demo"/>
+  </p>
 
 ---
 
