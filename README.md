@@ -64,7 +64,7 @@ This project demonstrates real-time communication, session-based collaboration a
 ## 📁 Project Structure
 
 ```
-frontend/src/assets/ProRT.jpg
+![Realtime Whiteboard](frontend/src/assets/ProRT.jpg)
 ```
 ---
 
