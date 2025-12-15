@@ -64,7 +64,6 @@ This project demonstrates real-time communication, session-based collaboration a
 ## 📁 Project Structure
 
 ```
-![WhatsApp Image 2025-12-16 at 01 00 26_8bb7a01c](https://github.com/user-attachments/assets/dd4d7872-35a8-4e94-8192-3e34836773a9)
 
 ```
 ---
