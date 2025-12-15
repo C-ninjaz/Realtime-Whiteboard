@@ -1,6 +1,6 @@
 # 🧼 Realtime Whiteboard
 
-A collaborative **real-time whiteboard application** that allows multiple users to draw, edit and interact on a shared canvas simultaneously. Built with **React + TypeScript frontend**, an **Express + Socket.IO backend** and **Keycloak** for authentication.
+A collaborative **real-time whiteboard application** that allows multiple users to draw, edit and interact on a shared canvas simultaneously. Built with **React + TypeScript frontend**m, **Express + Socket.IO backend** and **Keycloak** for authentication.
 
 This project demonstrates real-time communication, session-based collaboration and secure authentication using modern web technologies.
 
@@ -11,7 +11,7 @@ This project demonstrates real-time communication, session-based collaboration a
 - Smooth real-time drawing and syncing across users
 - Session-based collaboration using unique session IDs
 - Live cursor tracking for all participants
-- Undo / redo support and multiple drawing tools
+- Undo/redo support and multiple drawing tools
 - Secure authentication with Keycloak (OIDC)
 - Clean separation of frontend, backend, and auth infrastructure
 
@@ -64,29 +64,8 @@ This project demonstrates real-time communication, session-based collaboration a
 ## 📁 Project Structure
 
 ```
-realtime-whiteboard/
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   └── Whiteboard.tsx
-│   │   ├── utils/
-│   │   │   ├── socket.ts
-│   │   │   └── keycloak.ts
-│   │   ├── App.tsx
-│   │   └── main.tsx
-│   └── package.json
-│
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   │   └── keycloack.ts
-│   │   └── server.ts
-│   └── package.json
-│
-├── keycloak/
-│   └── docker-compose.yml
-│
-└── README.md
+<img width="449" height="342" alt="{C7E9A0E6-1A87-4A49-A3FF-CE6767CCBFFF}" src="https://github.com/user-attachments/assets/edb02a31-faf1-4df2-bc54-f5c1f4428f48" />
+
 ```
 ---
 
